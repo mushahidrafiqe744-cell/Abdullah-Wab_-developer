@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-script: "Italianno", cursive;
+  --font-pinyon: "Pinyon Script", cursive;
+  
+  --color-brand-dark: #0D2C1D;
+  --color-brand-cream: #F7F6F0;
+  --color-brand-card: #ECEAE1;
+  --color-brand-gold: #C29F5C;
+  --color-brand-accent: #E5C383;
+}
+
+/* Custom scrollbar and global utility styling */
+::selection {
+  background-color: #C29F5C;
+  color: #0D2C1D;
+}
+
+/* Hide scrollbar for clean horizontal scrolling in gallery tags */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
