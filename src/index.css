@@ -27,3 +27,18 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Custom premium bobbing / auto-floating animation for the hero profile picture */
+@keyframes bobble {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+.animate-float {
+  animation: bobble 6s ease-in-out infinite;
+}
+

@@ -31,6 +31,13 @@ import {
   Edit
 } from "lucide-react";
 
+// Inline High-Fidelity SVG WordPress Icon Component
+const WordPressIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current shrink-0" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <path d="M12.158 12.786l-2.698 7.84a11.964 11.964 0 005.11-.47l-2.412-7.37zM2.083 12c0 2.274.633 4.398 1.733 6.213L8.68 5.753c-.024-.01-.047-.024-.07-.035C4.78 7.33 2.083 9.352 2.083 12zm18.334 0c0-1.802-.634-3.056-1.185-4.008-.551-.951-1.07-1.742-1.07-2.678 0 1.053.42 1.833.911 2.703.456.81.996 1.768.996 3.197 0 1.052-.228 2.14-.648 3.275l1.631-4.908c.24-.768.36-1.284.36-1.581zm-9.043-.6c0-.528.23-.888.431-1.235.3-.505.59-.937.59-1.573 0-.745-.551-1.429-1.32-1.429a1.325 1.325 0 00-.733.204l1.62 4.433c.412-.4.412-.4.412-.4zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.3 16.5c0-.12-.024-.264-.048-.408-.096-.528-.48-1.56-.48-1.56s-.192-.552-.192-.768c0-.36.264-.672.576-.672.312 0 .528.24.528.528s-.024.504-.024.504c.144.912.864 2.832.864 3.48a9.914 9.914 0 01-5.11 1.472l1.692-4.932s.36-1.032.552-1.632c.12-.336.24-.48.456-.48.216 0 .408.144.408.408s-.024.528-.024.528c-.144.912-.864 2.832-.864 3.48a9.92 9.92 0 01-1.336.084z" />
+  </svg>
+);
+
 // Portfolio project structure
 interface Project {
   id: string;
@@ -97,15 +104,30 @@ export default function App() {
   const [searchTrackId, setSearchTrackId] = useState("");
   const [trackedProposalResult, setTrackedProposalResult] = useState<Proposal | null>(null);
 
+  // Hover states for interactive experience stats boxes
+  const [hoverProjects, setHoverProjects] = useState(false);
+  const [hoverYears, setHoverYears] = useState(false);
+  const [hoverSatisfaction, setHoverSatisfaction] = useState(false);
+
   // Custom UI & Confirmation states (To bypass Sandboxed iframe native prompt limits)
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [toast, setToast] = useState<{ text: string; type: "success" | "error" | "info" } | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [heroImg, setHeroImg] = useState<string>("https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80");
+  const [heroImgStyle, setHeroImgStyle] = useState<"arch" | "circle" | "rounded">("arch");
+  const [isNameHovered, setIsNameHovered] = useState(false);
   const [skills, setSkills] = useState<string[]>([]);
   const [newSkillText, setNewSkillText] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("923000000000");
+  
+  // Custom Social Profiles states (inspired by high fidelity circular dark icon card)
+  const [githubUrl, setGithubUrl] = useState("https://github.com/abdullah");
+  const [githubUsername, setGithubUsername] = useState("github.com/abdullah");
+  const [linkedinUrl, setLinkedinUrl] = useState("https://linkedin.com/in/abdullah");
+  const [linkedinUsername, setLinkedinUsername] = useState("linkedin.com/in/abdullah");
+  const [wordpressUrl, setWordPressUrl] = useState("https://wordpress.org");
+  const [wordpressUsername, setWordPressUsername] = useState("wordpress.org");
 
   // Helper to trigger elegant non-blocking toasts
   const triggerToast = (text: string, type: "success" | "error" | "info" = "success") => {
@@ -303,9 +325,25 @@ export default function App() {
     if (savedSkills) {
       setSkills(JSON.parse(savedSkills));
     } else {
-      const defaultSkills = ["REST / GraphQL APIs", "Database Indexing", "OAuth Integrations", "CI/CD Deployment", "State Machine UIs", "Lighthouse SEO"];
+      const defaultSkills = [
+        "React & Next.js SSR",
+        "TypeScript Architecture",
+        "Tailwind CSS Layouts",
+        "Node.js & Express APIs",
+        "PostgreSQL & MongoDB",
+        "REST & GraphQL APIs",
+        "Git & GitHub Workflow",
+        "WordPress Development",
+        "CI/CD Cloud Deployment"
+      ];
       setSkills(defaultSkills);
       localStorage.setItem("abdullah_skills", JSON.stringify(defaultSkills));
+    }
+
+    // 3.5 Hero Image Style
+    const savedHeroStyle = localStorage.getItem("abdullah_hero_img_style");
+    if (savedHeroStyle) {
+      setHeroImgStyle(savedHeroStyle as "arch" | "circle" | "rounded");
     }
 
     // 4. WhatsApp Number
@@ -316,6 +354,22 @@ export default function App() {
       setWhatsappNumber("923000000000");
       localStorage.setItem("abdullah_whatsapp", "923000000000");
     }
+
+    // 5. Custom Social Links
+    const savedGithubUrl = localStorage.getItem("abdullah_github_url");
+    if (savedGithubUrl) setGithubUrl(savedGithubUrl);
+    const savedGithubUser = localStorage.getItem("abdullah_github_user");
+    if (savedGithubUser) setGithubUsername(savedGithubUser);
+
+    const savedLinkedinUrl = localStorage.getItem("abdullah_linkedin_url");
+    if (savedLinkedinUrl) setLinkedinUrl(savedLinkedinUrl);
+    const savedLinkedinUser = localStorage.getItem("abdullah_linkedin_user");
+    if (savedLinkedinUser) setLinkedinUsername(savedLinkedinUser);
+
+    const savedWordPressUrl = localStorage.getItem("abdullah_wordpress_url");
+    if (savedWordPressUrl) setWordPressUrl(savedWordPressUrl);
+    const savedWordPressUser = localStorage.getItem("abdullah_wordpress_user");
+    if (savedWordPressUser) setWordPressUsername(savedWordPressUser);
   }, []);
 
   // --- Dynamic Calculator ---
@@ -560,13 +614,31 @@ export default function App() {
     setProposals(updatedList);
     localStorage.setItem("abdullah_proposals", JSON.stringify(updatedList));
 
-    // Focus tracking ID & display success modal state
+    // Formulate a beautiful bolded WhatsApp message text
+    const waText = `*🔥 NEW CLIENT PROPOSAL - ABDULLAH PORTFOLIO*\n` +
+      `----------------------------------------\n` +
+      `*📌 Project Code:* ${trackingId}\n` +
+      `*👤 Client Name:* ${newProposalName}\n` +
+      `*📧 Email:* ${newProposalEmail}\n` +
+      `*💼 Service:* ${estimatorService}\n` +
+      `*💰 Est. Budget:* $${estimatorCost}\n` +
+      `*⚡ Urgency:* ${estimatorTurnaround === "Express" ? "🚀 Express (Rush)" : "📅 Standard Schedule"}\n` +
+      `*📝 Project Message / Brief:*\n"${newProposalMessage || "Let's construct something outstanding!"}"\n` +
+      `----------------------------------------\n` +
+      `Hi Abdullah! I just calculated my project budget estimate on your portfolio. Let's chat and launch this project! 🚀`;
+
+    const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waText)}`;
+
+    // Focus tracking ID & display success state
     setTrackedProposalId(trackingId);
     setNewProposalName("");
     setNewProposalEmail("");
     setNewProposalMessage("");
     setSuccessMessage(true);
     triggerToast(`Proposal Received! Code: ${trackingId}`, "success");
+
+    // Open direct WhatsApp Chat channel with Abdullah in a new tab
+    window.open(whatsappLink, "_blank");
 
     setTimeout(() => {
       setSuccessMessage(false);
@@ -610,19 +682,34 @@ export default function App() {
       <header className="sticky top-0 z-40 w-full bg-[#F4F4F0]/90 backdrop-blur-md border-b border-emerald-950/5">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           
-          {/* Brand Logo Identity */}
-          <a href="#" className="flex flex-col group">
-            <div className="flex items-center gap-1.5">
-              <span className="font-serif text-2xl font-bold tracking-tight text-emerald-950 leading-none">
+          {/* Brand Logo Identity with the custom circular badge from image */}
+          <a href="#" className="flex items-center gap-3 group">
+            {/* Native High-Fidelity SVG Circular Logo Badge */}
+            <svg viewBox="0 0 100 100" className="w-12 h-12 shrink-0 overflow-visible transition-transform duration-500 group-hover:rotate-12">
+              <path id="headerLogoTextPath" d="M 50,50 m -43,0 a 43,43 0 1,1 86,0 a 43,43 0 1,1 -86,0" fill="none" />
+              <circle cx="50" cy="50" r="47" fill="none" stroke="#C29F5C" strokeWidth="0.75" opacity="0.4" />
+              <circle cx="50" cy="50" r="37" fill="#0D2C1D" stroke="#C29F5C" strokeWidth="1.2" />
+              <text className="font-serif font-extrabold fill-amber-600" style={{ fontSize: '4.8px', letterSpacing: '2.5px' }}>
+                <textPath href="#headerLogoTextPath" startOffset="0%">
+                  PORTFOLIO · AA ABDULLAH · PREMIUM ·
+                </textPath>
+              </text>
+              <text x="50" y="44" textAnchor="middle" className="font-serif font-black fill-amber-400" style={{ fontSize: '22px' }}>A</text>
+              <text x="50" y="53" textAnchor="middle" className="font-sans font-bold fill-white" style={{ fontSize: '8px' }}>Abdullah</text>
+              <text x="50" y="61" textAnchor="middle" className="font-sans font-extrabold fill-amber-400" style={{ fontSize: '4.5px', letterSpacing: '1px' }}>ENGINEER</text>
+              <g transform="translate(44, 66) scale(0.5)" stroke="#C29F5C" fill="none" strokeWidth="1.5">
+                <rect x="2" y="3" width="18" height="11" rx="1" />
+                <line x1="0" y1="16" x2="22" y2="16" />
+              </g>
+            </svg>
+            <div className="flex flex-col">
+              <span className="font-serif text-xl font-bold tracking-tight text-emerald-950 leading-none group-hover:text-amber-600 transition-colors">
                 Abdullah
               </span>
-              <span className="text-amber-500">
-                <Sparkles className="w-5 h-5 fill-amber-500 animate-pulse" />
+              <span className="text-[9px] uppercase tracking-[0.25em] text-emerald-950/70 font-semibold mt-1 leading-none">
+                WEB DEVELOPER
               </span>
             </div>
-            <span className="text-[9px] uppercase tracking-[0.25em] text-emerald-950/70 font-semibold mt-0.5 leading-none">
-              WEB DEVELOPER
-            </span>
           </a>
 
           {/* Nav elements */}
@@ -632,13 +719,6 @@ export default function App() {
             <a href="#portfolio" className="hover:text-amber-600 transition-colors">PORTFOLIO</a>
             <a href="#estimator" className="hover:text-amber-600 transition-colors">ESTIMATOR</a>
             <a href="#contact" className="hover:text-amber-600 transition-colors">CONTACT</a>
-            <button 
-              onClick={() => setIsSkillsModalOpen(true)} 
-              className="text-amber-600 hover:text-amber-700 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
-            >
-              <Laptop className="w-3.5 h-3.5" />
-              MY SKILLS
-            </button>
             <button 
               onClick={() => setIsCvModalOpen(true)} 
               className="text-amber-600 hover:text-amber-700 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
@@ -653,7 +733,7 @@ export default function App() {
             {/* Social Icons inside Navbar */}
             <div className="hidden sm:flex items-center gap-2 mr-1">
               <a 
-                href="https://github.com" 
+                href={githubUrl} 
                 target="_blank" 
                 rel="noreferrer" 
                 className="w-8 h-8 rounded-full bg-emerald-950/5 flex items-center justify-center text-emerald-950 hover:bg-emerald-950 hover:text-white transition-all shadow-sm"
@@ -662,13 +742,22 @@ export default function App() {
                 <Github className="w-4 h-4" />
               </a>
               <a 
-                href="https://linkedin.com" 
+                href={linkedinUrl} 
                 target="_blank" 
                 rel="noreferrer" 
                 className="w-8 h-8 rounded-full bg-emerald-950/5 flex items-center justify-center text-emerald-950 hover:bg-emerald-950 hover:text-white transition-all shadow-sm"
                 title="LinkedIn Link"
               >
                 <Linkedin className="w-4 h-4" />
+              </a>
+              <a 
+                href={wordpressUrl} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="w-8 h-8 rounded-full bg-emerald-950/5 flex items-center justify-center text-emerald-950 hover:bg-emerald-950 hover:text-white transition-all shadow-sm"
+                title="WordPress Link"
+              >
+                <WordPressIcon className="w-4 h-4 fill-current" />
               </a>
               <a 
                 href={`https://wa.me/${whatsappNumber}`} 
@@ -682,15 +771,6 @@ export default function App() {
                 </svg>
               </a>
             </div>
-
-            {/* Mobile Skills Button */}
-            <button 
-              onClick={() => setIsSkillsModalOpen(true)} 
-              className="lg:hidden text-amber-600 hover:text-amber-700 font-bold text-xs tracking-wider transition-colors mr-2 cursor-pointer flex items-center gap-1"
-            >
-              <Laptop className="w-3.5 h-3.5" />
-              SKILLS
-            </button>
 
             {/* Mobile CV Button */}
             <button 
@@ -735,10 +815,25 @@ export default function App() {
             </div>
 
             <div className="mt-4 relative">
-              <h1 className="font-serif text-6xl lg:text-8xl font-black text-emerald-950 leading-none tracking-tight select-none">
-                Abdullah
+              <h1 
+                onMouseEnter={() => setIsNameHovered(true)}
+                onMouseLeave={() => setIsNameHovered(false)}
+                className="font-serif text-6xl lg:text-8xl font-black text-emerald-950 leading-none tracking-tight select-none cursor-default flex flex-row items-center overflow-visible"
+              >
+                {"Abdullah".split("").map((letter, index) => (
+                  <span
+                    key={index}
+                    className="inline-block transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:text-amber-500"
+                    style={{
+                      color: isNameHovered ? "#d97706" : undefined,
+                      transitionDelay: isNameHovered ? `${index * 60}ms` : '0ms'
+                    }}
+                  >
+                    {letter}
+                  </span>
+                ))}
               </h1>
-              <div className="flex flex-wrap items-center -mt-1 gap-x-4">
+              <div className="flex flex-wrap items-center -mt-1 gap-x-4 animate-float">
                 <span className="font-serif text-5xl lg:text-7xl text-amber-600 italic">
                   Premium Web
                 </span>
@@ -777,6 +872,59 @@ export default function App() {
                 COST ESTIMATOR
               </button>
             </div>
+
+            {/* INTERACTIVE EXPERIENCE STATS CARD FOR HERO */}
+            <div className="mt-10 pt-8 border-t border-emerald-950/10 grid grid-cols-3 gap-4">
+              {/* Stat 1: Projects Delivered */}
+              <div 
+                onMouseEnter={() => setHoverProjects(true)}
+                onMouseLeave={() => setHoverProjects(false)}
+                className="group cursor-default p-4 bg-white/40 hover:bg-white rounded-3xl border border-emerald-950/5 hover:border-amber-500/30 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-out flex flex-col justify-between min-h-[120px]"
+              >
+                <div className="font-serif text-3xl lg:text-4xl font-bold text-emerald-950 transition-transform duration-300 transform group-hover:scale-108 origin-left">
+                  {hoverProjects ? "140+" : "0+"}
+                </div>
+                <div className="mt-2 text-[10px] font-bold text-emerald-950/70 group-hover:text-emerald-950 tracking-tight leading-snug flex items-center gap-0.5 transition-colors">
+                  <span>Projects Delivered</span>
+                  <span className="text-amber-600 transition-transform duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
+                </div>
+              </div>
+
+              {/* Stat 2: Years Experience */}
+              <div 
+                onMouseEnter={() => setHoverYears(true)}
+                onMouseLeave={() => setHoverYears(false)}
+                className="group cursor-default p-4 bg-white/40 hover:bg-white rounded-3xl border border-emerald-950/5 hover:border-amber-500/30 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-out flex flex-col justify-between min-h-[120px]"
+              >
+                <div>
+                  <div className="font-serif text-3xl lg:text-4xl font-bold text-emerald-950 transition-transform duration-300 transform group-hover:scale-108 origin-left leading-none">
+                    {hoverYears ? "5+" : "0+"}
+                  </div>
+                  <div className="font-serif text-[10px] font-bold text-emerald-950/50 leading-none mt-1 group-hover:text-emerald-950/70 transition-colors">
+                    Years
+                  </div>
+                </div>
+                <div className="mt-2 text-[10px] font-bold text-emerald-950/70 group-hover:text-emerald-950 tracking-tight leading-snug flex items-center gap-0.5 transition-colors">
+                  <span>Experience</span>
+                  <span className="text-amber-600 transition-transform duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
+                </div>
+              </div>
+
+              {/* Stat 3: Satisfaction */}
+              <div 
+                onMouseEnter={() => setHoverSatisfaction(true)}
+                onMouseLeave={() => setHoverSatisfaction(false)}
+                className="group cursor-default p-4 bg-white/40 hover:bg-white rounded-3xl border border-emerald-950/5 hover:border-amber-500/30 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-out flex flex-col justify-between min-h-[120px]"
+              >
+                <div className="font-serif text-3xl lg:text-4xl font-bold text-emerald-950 transition-transform duration-300 transform group-hover:scale-108 origin-left">
+                  {hoverSatisfaction ? "100%" : "0%"}
+                </div>
+                <div className="mt-2 text-[10px] font-bold text-emerald-950/70 group-hover:text-emerald-950 tracking-tight leading-snug flex items-center gap-0.5 transition-colors">
+                  <span>Satisfaction</span>
+                  <span className="text-amber-600 transition-transform duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Decorative Portrait Arch containing beautiful graphic */}
@@ -785,14 +933,20 @@ export default function App() {
             {/* Ambient Backing Circle */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 lg:w-96 h-80 lg:h-96 rounded-full border border-amber-500/20 -z-0"></div>
             
-            <div className="relative z-10 w-72 lg:w-80">
+            <div className="relative z-10 w-72 lg:w-80 animate-float">
               {/* Top Star Ornament */}
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-amber-500">
                 <Sparkles className="w-6 h-6 fill-amber-500" />
               </div>
 
-              {/* Archetypal Portrait frame containing high-tech code/graphics visual */}
-              <div className="w-full h-[380px] lg:h-[420px] rounded-t-full border-[10px] border-[#ECEAE1] overflow-hidden shadow-2xl relative bg-emerald-950 group">
+              {/* Dynamic Portrait Frame containing high-tech code/graphics visual */}
+              <div className={`transition-all duration-500 overflow-hidden border-[10px] border-[#ECEAE1] shadow-2xl relative bg-emerald-950 group ${
+                heroImgStyle === "circle"
+                  ? "w-72 h-72 lg:w-80 lg:h-80 rounded-full mx-auto"
+                  : heroImgStyle === "rounded"
+                  ? "w-full h-[380px] lg:h-[420px] rounded-[2.5rem]"
+                  : "w-full h-[380px] lg:h-[420px] rounded-t-full"
+              }`}>
                 <img 
                   src={heroImg} 
                   alt="Abdullah - Premium Web Developer" 
@@ -822,33 +976,132 @@ export default function App() {
                 {/* Visual Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-transparent to-transparent pointer-events-none"></div>
                 <div className="absolute bottom-6 left-6 right-6 text-white text-center">
-                  <p className="font-mono text-xs text-amber-400">const developer = {"{"}</p>
-                  <p className="font-mono text-xs text-slate-300 ml-4">name: 'Abdullah',</p>
-                  <p className="font-mono text-xs text-slate-300 ml-4">role: 'Full-Stack Engine'</p>
-                  <p className="font-mono text-xs text-amber-400">{"};"}</p>
+                  <p className="font-mono text-[10px] sm:text-xs text-amber-400">const developer = {"{"}</p>
+                  <p className="font-mono text-[10px] sm:text-xs text-slate-300 ml-4">name: 'Abdullah',</p>
+                  <p className="font-mono text-[10px] sm:text-xs text-slate-300 ml-4 font-semibold">skills: 'Web Developer'</p>
+                  <p className="font-mono text-[10px] sm:text-xs text-amber-400">{"};"}</p>
                 </div>
               </div>
 
-              {/* Float badge */}
-              <div className="absolute -bottom-4 -right-4 bg-white border border-emerald-950/5 text-emerald-950 px-4 py-3 rounded-2xl shadow-xl max-w-[180px] text-left">
-                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest border-b border-emerald-950/5 pb-1.5 mb-1.5">
-                  DEV CREDENTIALS:
-                </p>
-                <div className="space-y-1.5">
+              {/* Dynamic Image Style Switcher Button Group */}
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 bg-white/80 backdrop-blur-sm p-1 rounded-2xl border border-emerald-950/5 shadow-md">
+                <span className="text-[9px] font-extrabold text-emerald-950/50 uppercase tracking-widest pl-2 pr-1">Frame Style:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setHeroImgStyle("arch");
+                    localStorage.setItem("abdullah_hero_img_style", "arch");
+                    triggerToast("Classical Arch frame applied!", "success");
+                  }}
+                  className={`px-2.5 py-1.5 text-[9px] font-bold tracking-wider uppercase rounded-xl transition-all cursor-pointer ${
+                    heroImgStyle === "arch"
+                      ? "bg-emerald-950 text-white shadow-sm"
+                      : "text-emerald-950/60 hover:text-emerald-950"
+                  }`}
+                >
+                  Arch
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setHeroImgStyle("circle");
+                    localStorage.setItem("abdullah_hero_img_style", "circle");
+                    triggerToast("Modern Circular frame applied!", "success");
+                  }}
+                  className={`px-2.5 py-1.5 text-[9px] font-bold tracking-wider uppercase rounded-xl transition-all cursor-pointer ${
+                    heroImgStyle === "circle"
+                      ? "bg-emerald-950 text-white shadow-sm"
+                      : "text-emerald-950/60 hover:text-emerald-950"
+                  }`}
+                >
+                  Circle
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setHeroImgStyle("rounded");
+                    localStorage.setItem("abdullah_hero_img_style", "rounded");
+                    triggerToast("Premium Rounded Card applied!", "success");
+                  }}
+                  className={`px-2.5 py-1.5 text-[9px] font-bold tracking-wider uppercase rounded-xl transition-all cursor-pointer ${
+                    heroImgStyle === "rounded"
+                      ? "bg-emerald-950 text-white shadow-sm"
+                      : "text-emerald-950/60 hover:text-emerald-950"
+                  }`}
+                >
+                  Rounded
+                </button>
+              </div>
+
+              {/* Premium Social Credentials Float Card (Styled exactly like the requested Pinterest/TikTok/Instagram style) */}
+              <div className="relative mt-10 mx-auto lg:absolute lg:mt-0 lg:-bottom-10 lg:-left-40 xl:-left-48 bg-white border border-emerald-950/5 text-emerald-950 p-5 rounded-[2rem] shadow-2xl w-72 text-left z-20 group/social hover:scale-102 transition-transform duration-300">
+                <div className="flex items-center justify-between border-b border-emerald-950/5 pb-2.5 mb-4">
+                  <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.15em]">
+                    CONNECT WITH ME:
+                  </p>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                
+                <div className="flex flex-col gap-4">
+                  {/* GitHub Profile */}
                   <a 
-                    href="https://github.com" 
+                    href={githubUrl} 
                     target="_blank" 
                     rel="noreferrer"
-                    className="text-[10px] font-semibold flex items-center gap-1.5 hover:text-amber-600 transition-colors"
+                    className="flex items-center gap-3.5 group/item cursor-pointer"
                   >
-                    <Github className="w-3.5 h-3.5 text-emerald-950 shrink-0" /> GitHub Profile
+                    <div className="w-11 h-11 rounded-full bg-emerald-950 text-white flex items-center justify-center shrink-0 group-hover/item:bg-amber-500 group-hover/item:text-emerald-950 transition-all duration-300 shadow-md">
+                      <Github className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h5 className="text-xs font-serif font-bold text-emerald-950 uppercase tracking-wide leading-none mb-1">
+                        GitHub Profile
+                      </h5>
+                      <span className="text-[10px] text-emerald-950/60 font-semibold font-sans tracking-tight hover:text-amber-600 transition-colors block break-all">
+                        {githubUsername}
+                      </span>
+                    </div>
                   </a>
-                  <p className="text-[10px] font-semibold flex items-center gap-1.5">
-                    <Code2 className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Full-Stack Dev
-                  </p>
-                  <p className="text-[10px] font-semibold flex items-center gap-1.5">
-                    <Globe className="w-3.5 h-3.5 text-emerald-950 shrink-0" /> Live Web Apps
-                  </p>
+
+                  {/* LinkedIn Profile */}
+                  <a 
+                    href={linkedinUrl} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center gap-3.5 group/item cursor-pointer"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-emerald-950 text-white flex items-center justify-center shrink-0 group-hover/item:bg-amber-500 group-hover/item:text-emerald-950 transition-all duration-300 shadow-md">
+                      <Linkedin className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h5 className="text-xs font-serif font-bold text-emerald-950 uppercase tracking-wide leading-none mb-1">
+                        LinkedIn Profile
+                      </h5>
+                      <span className="text-[10px] text-emerald-950/60 font-semibold font-sans tracking-tight hover:text-amber-600 transition-colors block break-all">
+                        {linkedinUsername}
+                      </span>
+                    </div>
+                  </a>
+
+                  {/* WordPress Site */}
+                  <a 
+                    href={wordpressUrl} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center gap-3.5 group/item cursor-pointer"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-emerald-950 text-white flex items-center justify-center shrink-0 group-hover/item:bg-amber-500 group-hover/item:text-emerald-950 transition-all duration-300 shadow-md">
+                      <WordPressIcon className="w-5 h-5 fill-current" />
+                    </div>
+                    <div>
+                      <h5 className="text-xs font-serif font-bold text-emerald-950 uppercase tracking-wide leading-none mb-1">
+                        WordPress Site
+                      </h5>
+                      <span className="text-[10px] text-emerald-950/60 font-semibold font-sans tracking-tight hover:text-amber-600 transition-colors block break-all">
+                        {wordpressUsername}
+                      </span>
+                    </div>
+                  </a>
                 </div>
               </div>
 
@@ -900,51 +1153,51 @@ export default function App() {
           {/* Professional Credentials Badge & Details */}
           <div className="lg:col-span-6 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             
-            <div className="md:col-span-7 space-y-5">
+            <div className="md:col-span-7 space-y-6">
               
-              {/* Row 1: Birthday */}
-              <div className="flex items-center gap-4 group">
-                <div className="w-10 h-10 rounded-full bg-white/5 group-hover:bg-amber-500/15 transition-colors border border-white/10 flex items-center justify-center text-amber-500 shrink-0">
-                  <Calendar className="w-4 h-4" />
+              {/* Row 1: Work Style */}
+              <div className="flex items-center gap-4 group hover:translate-x-2.5 transition-all duration-300 cursor-default">
+                <div className="w-11 h-11 rounded-full bg-white/5 group-hover:bg-amber-500 group-hover:text-emerald-950 group-hover:scale-110 group-hover:rotate-6 border border-white/10 group-hover:border-amber-500 flex items-center justify-center text-amber-500 shrink-0 transition-all duration-300 shadow-md">
+                  <Calendar className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">WORK STYLE</p>
-                  <p className="text-sm font-semibold tracking-wide">Full-Time Freelancer & Architect</p>
+                  <p className="text-[10px] font-bold text-slate-400 group-hover:text-amber-500 tracking-wider uppercase transition-colors">WORK STYLE</p>
+                  <p className="text-sm font-bold text-white/90 group-hover:text-white transition-colors tracking-wide">Full-Time Freelancer & Architect</p>
                 </div>
               </div>
 
               {/* Row 2: Location */}
-              <div className="flex items-center gap-4 group">
-                <div className="w-10 h-10 rounded-full bg-white/5 group-hover:bg-amber-500/15 transition-colors border border-white/10 flex items-center justify-center text-amber-500 shrink-0">
-                  <MapPin className="w-4 h-4" />
+              <div className="flex items-center gap-4 group hover:translate-x-2.5 transition-all duration-300 cursor-default">
+                <div className="w-11 h-11 rounded-full bg-white/5 group-hover:bg-amber-500 group-hover:text-emerald-950 group-hover:scale-110 group-hover:rotate-6 border border-white/10 group-hover:border-amber-500 flex items-center justify-center text-amber-500 shrink-0 transition-all duration-300 shadow-md">
+                  <MapPin className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">LOCATION</p>
-                  <p className="text-sm font-semibold tracking-wide">Pakistan (Remote Worldwide)</p>
+                  <p className="text-[10px] font-bold text-slate-400 group-hover:text-amber-500 tracking-wider uppercase transition-colors">LOCATION</p>
+                  <p className="text-sm font-bold text-white/90 group-hover:text-white transition-colors tracking-wide">Pakistan (Remote Worldwide)</p>
                 </div>
               </div>
 
               {/* Row 3: Email */}
-              <a href="mailto:abdullah.dev.pro@gmail.com" className="flex items-center gap-4 group block">
-                <div className="w-10 h-10 rounded-full bg-white/5 group-hover:bg-amber-500/15 transition-colors border border-white/10 flex items-center justify-center text-amber-500 shrink-0">
-                  <Mail className="w-4 h-4" />
+              <a href="mailto:abdullah.dev.pro@gmail.com" className="flex items-center gap-4 group hover:translate-x-2.5 transition-all duration-300 block">
+                <div className="w-11 h-11 rounded-full bg-white/5 group-hover:bg-amber-500 group-hover:text-emerald-950 group-hover:scale-110 group-hover:rotate-6 border border-white/10 group-hover:border-amber-500 flex items-center justify-center text-amber-500 shrink-0 transition-all duration-300 shadow-md">
+                  <Mail className="w-4.5 h-4.5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">EMAIL ADDRESS</p>
-                  <p className="text-sm font-semibold tracking-wide hover:text-amber-500 transition-colors truncate">
+                  <p className="text-[10px] font-bold text-slate-400 group-hover:text-amber-500 tracking-wider uppercase transition-colors">EMAIL ADDRESS</p>
+                  <p className="text-sm font-bold text-white/90 group-hover:text-amber-400 transition-colors tracking-wide truncate">
                     abdullah.dev.pro@gmail.com
                   </p>
                 </div>
               </a>
 
-              {/* Row 4: Phone */}
-              <div className="flex items-center gap-4 group">
-                <div className="w-10 h-10 rounded-full bg-white/5 group-hover:bg-amber-500/15 transition-colors border border-white/10 flex items-center justify-center text-amber-500 shrink-0">
-                  <Phone className="w-4 h-4" />
+              {/* Row 4: Phone / Availability */}
+              <div className="flex items-center gap-4 group hover:translate-x-2.5 transition-all duration-300 cursor-default">
+                <div className="w-11 h-11 rounded-full bg-white/5 group-hover:bg-amber-500 group-hover:text-emerald-950 group-hover:scale-110 group-hover:rotate-6 border border-white/10 group-hover:border-amber-500 flex items-center justify-center text-amber-500 shrink-0 transition-all duration-300 shadow-md">
+                  <Phone className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">AVAILABILITY</p>
-                  <p className="text-sm font-semibold tracking-wide">Available (Hours: 9 AM - 9 PM PST)</p>
+                  <p className="text-[10px] font-bold text-slate-400 group-hover:text-amber-500 tracking-wider uppercase transition-colors">AVAILABILITY</p>
+                  <p className="text-sm font-bold text-white/90 group-hover:text-white transition-colors tracking-wide">Available (Hours: 9 AM - 9 PM PST)</p>
                 </div>
               </div>
 
@@ -983,8 +1236,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* SERVICES, SKILLS, EXPERIENCE GRID */}
-      <section id="services" className="grid grid-cols-1 lg:grid-cols-3">
+      {/* SERVICES, SKILLS GRID */}
+      <section id="services" className="grid grid-cols-1 lg:grid-cols-2">
         
         {/* Column 1: Core Services */}
         <div className="bg-[#ECEAE1] p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-emerald-950/10">
@@ -1006,14 +1259,14 @@ export default function App() {
             ].map((service, index) => (
               <div 
                 key={index} 
-                className="group flex gap-4 p-3.5 rounded-xl hover:bg-[#DFDCCE] transition-all duration-300"
+                className="group flex gap-4 p-4 rounded-2xl hover:bg-[#DFDCCE]/70 hover:translate-x-2 hover:shadow-md transition-all duration-300 cursor-default"
               >
-                <div className="w-8 h-8 rounded-full bg-emerald-950 group-hover:bg-amber-500 text-white group-hover:text-emerald-950 flex items-center justify-center transition-colors shrink-0 mt-0.5">
-                  <span className="text-[11px] font-bold">{String(index + 1).padStart(2, '0')}</span>
+                <div className="w-9 h-9 rounded-full bg-emerald-950 group-hover:bg-amber-500 text-white group-hover:text-emerald-950 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-sm font-sans">
+                  <span className="text-[11px] font-black">{String(index + 1).padStart(2, '0')}</span>
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-emerald-950 tracking-wider uppercase mb-1">{service.title}</h3>
-                  <p className="text-xs text-emerald-950/70 leading-relaxed font-normal">{service.desc}</p>
+                  <h3 className="text-xs font-black text-emerald-950 tracking-wider uppercase mb-1.5 group-hover:text-amber-700 transition-colors">{service.title}</h3>
+                  <p className="text-xs text-emerald-950/70 group-hover:text-emerald-950 transition-colors leading-relaxed font-normal">{service.desc}</p>
                 </div>
               </div>
             ))}
@@ -1021,185 +1274,161 @@ export default function App() {
         </div>
 
         {/* Column 2: Interactive Developer Tech Stack */}
-        <div className="bg-[#F4F4F0] p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-emerald-950/10">
+        <div className="bg-[#F4F4F0] p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-emerald-950/10 space-y-8">
           
-          <div className="mb-10">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-1.5 h-6 bg-amber-500 rounded-full"></div>
-              <h2 className="font-serif text-2xl lg:text-3xl font-bold text-emerald-950 tracking-tight">
-                Tech Stack
-              </h2>
+          {/* Web Development Mastery Dashboard (Styled precisely like your uploaded image with custom logos) */}
+          <div className="bg-[#f4f1e8] p-6 rounded-[2rem] border border-emerald-950/10 shadow-sm text-left">
+            <div className="flex items-center justify-between border-b border-emerald-950/10 pb-3 mb-5">
+              <span className="text-[11px] font-bold tracking-[0.2em] text-emerald-950/90 uppercase">
+                WEB DEVELOPMENT MASTERY
+              </span>
+              <span className="text-[10px] font-bold tracking-[0.15em] text-amber-600 uppercase">
+                5 CORE SKILLS
+              </span>
             </div>
 
-            <p className="text-xs text-emerald-950/75 mb-6 leading-relaxed">
-              Click any tech icon to review Abdullah's level of proficiency, projects completed, and custom engineering tips.
-            </p>
-
-            <div className="flex flex-wrap gap-2">
-              {Object.keys(techDetails).map((key) => (
-                <button
-                  key={key}
-                  onClick={() => setActiveTech(key)}
-                  className={`px-3 py-2 rounded-lg border font-bold text-xs tracking-wide transition-all cursor-pointer ${
-                    activeTech === key 
-                      ? `${techDetails[key].color} shadow-md scale-102 ring-1 ring-amber-500` 
-                      : "bg-[#DFDCCE]/50 border-emerald-950/10 text-emerald-950/80 hover:bg-[#DFDCCE]"
-                  }`}
-                >
-                  {key}
-                </button>
-              ))}
-            </div>
-
-            {/* Interactive Panel details */}
-            {activeTech && (
-              <div className="mt-6 bg-[#ECEAE1] border border-emerald-950/5 rounded-2xl p-5 shadow-inner transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-emerald-950 tracking-wider uppercase">
-                    {techDetails[activeTech].full}
-                  </h4>
-                  <span className="text-xs font-bold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-md">
-                    {techDetails[activeTech].rating}
-                  </span>
-                </div>
-                
-                <div className="mt-3 flex items-center justify-between bg-white/40 px-3 py-2 rounded-xl text-xs font-semibold">
-                  <span className="text-emerald-950/50">PROVEN PROJECTS:</span>
-                  <span className="text-emerald-950 font-bold">{techDetails[activeTech].projects}</span>
-                </div>
-
-                <p className="mt-3 text-xs text-emerald-950/80 leading-relaxed font-normal">
-                  {techDetails[activeTech].note}
-                </p>
-
-                <div className="mt-4 p-3 rounded-xl bg-emerald-950 text-white text-[11px] leading-relaxed border-l-2 border-amber-500 font-normal">
-                  {techDetails[activeTech].tip}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Hard Skills checklist */}
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-1.5 h-6 bg-amber-500 rounded-full"></div>
-              <h2 className="font-serif text-xl font-bold text-emerald-950 tracking-tight">
-                Engineering Skills
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {skills.map((skill, i) => (
-                <div key={i} className="flex items-center justify-between gap-2 p-2 bg-[#ECEAE1] rounded-xl border border-emerald-950/5 group/skill">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="w-4 h-4 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-600 shrink-0">
-                      <Check className="w-2.5 h-2.5 stroke-[3]" />
-                    </span>
-                    <span className="text-xs font-semibold text-emerald-950 truncate">{skill}</span>
+            <div className="space-y-4">
+              {/* Tool 1: React & Next.js */}
+              <div className="group bg-white p-4 rounded-2xl border border-emerald-950/5 shadow-sm hover:scale-[1.02] hover:translate-x-1.5 hover:shadow-md hover:border-emerald-950/15 transition-all duration-300 cursor-default">
+                <div className="flex items-start gap-3.5">
+                  {/* React Icon */}
+                  <div className="w-11 h-11 shrink-0 rounded-xl bg-[#0a192f] flex items-center justify-center border border-[#61dafb]/30 shadow-sm group-hover:scale-108 group-hover:rotate-6 transition-transform duration-300">
+                    <svg viewBox="0 0 100 100" className="w-6 h-6 animate-spin" style={{ animationDuration: '10s' }}>
+                      <ellipse cx="50" cy="50" rx="8" ry="28" fill="none" stroke="#61dafb" strokeWidth="2.5" transform="rotate(30 50 50)" />
+                      <ellipse cx="50" cy="50" rx="8" ry="28" fill="none" stroke="#61dafb" strokeWidth="2.5" transform="rotate(90 50 50)" />
+                      <ellipse cx="50" cy="50" rx="8" ry="28" fill="none" stroke="#61dafb" strokeWidth="2.5" transform="rotate(150 50 50)" />
+                      <circle cx="50" cy="50" r="4.5" fill="#61dafb" />
+                    </svg>
                   </div>
-                  <button
-                    onClick={() => handleDeleteSkill(skill)}
-                    className="text-red-600 hover:text-red-700 p-1 rounded-md hover:bg-red-500/10 cursor-pointer opacity-0 group-hover/skill:opacity-100 transition-opacity"
-                    title={`Delete ${skill}`}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Form to dynamically add skill inline */}
-            <form onSubmit={handleAddSkill} className="mt-4 flex gap-2">
-              <input 
-                type="text"
-                value={newSkillText}
-                onChange={(e) => setNewSkillText(e.target.value)}
-                placeholder="Add new skill (e.g. Docker)"
-                className="flex-1 bg-[#ECEAE1] border border-emerald-950/5 px-3.5 py-2.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500 text-emerald-950"
-              />
-              <button
-                type="submit"
-                className="bg-emerald-950 hover:bg-emerald-900 text-white font-bold text-xs px-4 py-2.5 rounded-xl uppercase tracking-wider cursor-pointer"
-              >
-                + ADD
-              </button>
-            </form>
-
-            {/* Beautiful WhatsApp Quick Message card below skills list */}
-            <div className="mt-6 p-4 bg-[#DFDCCE]/30 border border-emerald-950/5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-left">
-                <p className="text-xs font-bold text-emerald-950">Need custom expertise in these technologies?</p>
-                <p className="text-[10px] text-emerald-950/60 font-medium">Message Abdullah directly to discuss your project requirements.</p>
-              </div>
-              <a
-                href={`https://wa.me/${whatsappNumber}?text=Hi%20Abdullah,%20I%20reviewed%20your%20skills%20on%20your%20portfolio%20and%20would%20love%20to%20discuss%20a%20project!`}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1ebd59] text-white font-extrabold text-[11px] tracking-wider px-5 py-3 rounded-xl uppercase flex items-center justify-center gap-2 shadow-md transition-all scale-102 hover:scale-105"
-              >
-                <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current">
-                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.432 2.502 1.157 3.473L6.5 19.5l4.241-.922c.942.457 2.001.718 3.121.718 3.18 0 5.766-2.586 5.767-5.766.002-3.181-2.584-5.766-5.767-5.766L12.031 6.172zm3.896 8.354c-.161.453-.836.852-1.242.903-.361.045-.815.064-1.332-.102-.324-.104-.737-.258-1.258-.484-2.221-.962-3.649-3.21-3.76-3.359-.111-.148-.901-1.2-1.01-2.35-.11-1.15.485-1.742.727-1.984.242-.242.53-.303.707-.303.177 0 .354.002.508.01.161.008.379-.062.593.454.222.535.758 1.848.824 1.98.066.132.11.286.022.463-.088.177-.132.286-.264.44l-.396.484c-.132.154-.27.32-.116.583.154.264.685 1.129 1.47 1.83.992.887 1.826 1.16 2.09 1.292.264.132.418.11.572-.066.154-.176.66-.77.836-1.035.176-.264.352-.22.595-.132.242.088 1.542.727 1.806.859.264.132.44.198.506.309.066.111.066.64-.095 1.093z"/>
-                </svg>
-                Message Abdullah
-              </a>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Column 3: Full Experience & Milestones */}
-        <div className="bg-emerald-950 p-8 lg:p-12 text-white flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-1.5 h-6 bg-amber-500 rounded-full"></div>
-              <h2 className="font-serif text-2xl lg:text-3xl font-bold text-white tracking-tight">
-                Experience
-              </h2>
-            </div>
-
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden backdrop-blur-sm">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-emerald-950 shrink-0 shadow-lg font-bold">
-                  <Briefcase className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-white leading-snug">Lead Full-Stack Freelancer</h3>
-                  <p className="text-amber-500 text-xs font-semibold mt-1 tracking-wider">2024 - Present</p>
-                </div>
-              </div>
-
-              <div className="mt-6 border-t border-white/10 pt-5 space-y-3.5">
-                {[
-                  "Built 5+ Enterprise SaaS Clients",
-                  "Configured Secure Payment APIs",
-                  "Deployed PostgreSQL Web Instances",
-                  "Maintained 99.8% Client Uptime"
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-2.5 group">
-                    <span className="w-4.5 h-4.5 rounded-full bg-amber-500 flex items-center justify-center text-emerald-950 shrink-0">
-                      <Check className="w-2.5 h-2.5 stroke-[3]" />
-                    </span>
-                    <span className="text-xs text-white/95 font-medium group-hover:text-amber-500 transition-colors">
-                      {item}
-                    </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-emerald-950 tracking-tight group-hover:text-amber-700 transition-colors">React & Next.js</h4>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-bold text-emerald-950/50 bg-[#F4F4F0] group-hover:bg-amber-500/10 group-hover:text-amber-800 px-1.5 py-0.5 rounded-md transition-colors">96%</span>
+                        <span className="text-[9px] font-extrabold text-[#112a1f] bg-[#61dafb]/10 text-sky-800 px-2 py-0.5 rounded-full uppercase tracking-wider group-hover:scale-105 transition-transform">Expert</span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-emerald-950/70 group-hover:text-emerald-950/90 mt-1 leading-relaxed transition-colors">
+                      Single Page Applications (SPAs), Server-Side Rendering (SSR), responsive interactive state architectures.
+                    </p>
+                    {/* Progress Bar */}
+                    <div className="mt-3.5 w-full h-1.5 bg-[#e8e5d9] rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-emerald-950 to-[#C29F5C] rounded-full group-hover:from-amber-500 group-hover:to-amber-600 transition-all duration-500" style={{ width: "96%" }}></div>
+                    </div>
                   </div>
-                ))}
+                </div>
+              </div>
+
+              {/* Tool 2: TypeScript */}
+              <div className="group bg-white p-4 rounded-2xl border border-emerald-950/5 shadow-sm hover:scale-[1.02] hover:translate-x-1.5 hover:shadow-md hover:border-emerald-950/15 transition-all duration-300 cursor-default">
+                <div className="flex items-start gap-3.5">
+                  {/* TypeScript Icon */}
+                  <div className="w-11 h-11 shrink-0 rounded-xl bg-[#00273f] flex items-center justify-center border border-[#3178c6]/40 shadow-sm group-hover:scale-108 group-hover:rotate-6 transition-transform duration-300">
+                    <span className="text-xs font-black text-[#3178c6] tracking-tight font-serif leading-none">TS</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-emerald-950 tracking-tight group-hover:text-amber-700 transition-colors">TypeScript</h4>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-bold text-emerald-950/50 bg-[#F4F4F0] group-hover:bg-amber-500/10 group-hover:text-amber-800 px-1.5 py-0.5 rounded-md transition-colors">92%</span>
+                        <span className="text-[9px] font-extrabold text-[#112a1f] bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider group-hover:scale-105 transition-transform">Advanced</span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-emerald-950/70 group-hover:text-emerald-950/90 mt-1 leading-relaxed transition-colors">
+                      Static type safety, robust scalable schemas, compilation pipelines, error-free interfaces.
+                    </p>
+                    {/* Progress Bar */}
+                    <div className="mt-3.5 w-full h-1.5 bg-[#e8e5d9] rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-emerald-950 to-[#C29F5C] rounded-full group-hover:from-amber-500 group-hover:to-amber-600 transition-all duration-500" style={{ width: "92%" }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tool 3: Tailwind CSS */}
+              <div className="group bg-white p-4 rounded-2xl border border-emerald-950/5 shadow-sm hover:scale-[1.02] hover:translate-x-1.5 hover:shadow-md hover:border-emerald-950/15 transition-all duration-300 cursor-default">
+                <div className="flex items-start gap-3.5">
+                  {/* Tailwind Icon */}
+                  <div className="w-11 h-11 shrink-0 rounded-xl bg-[#0b232e] flex items-center justify-center border border-[#38bdf8]/30 shadow-sm group-hover:scale-108 group-hover:rotate-6 transition-transform duration-300">
+                    <svg viewBox="0 0 24 24" className="w-5.5 h-5.5 fill-none stroke-[#38bdf8]" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3c-1.2 0-2.4.6-3.6 1.8L3.6 9.6c-1.2 1.2-1.8 2.4-1.8 3.6 0 1.2.6 2.4 1.8 3.6l4.8 4.8c1.2 1.2 2.4 1.8 3.6 1.8 1.2 0 2.4-.6 3.6-1.8l4.8-4.8c1.2-1.2 1.8-2.4 1.8-3.6 0-1.2-.6-2.4-1.8-3.6L15.6 4.8C14.4 3.6 13.2 3 12 3z" />
+                      <path d="M12 9c-.6 0-1.2.3-1.8.9l-2.4 2.4c-.6.6-.9 1.2-.9 1.8 0 .6.3 1.2.9 1.8l2.4 2.4c.6.6 1.2.9 1.8.9.6 0 1.2-.3 1.8-.9l2.4-2.4c.6-.6.9-1.2.9-1.8 0-.6-.3-1.2-.9-1.8L13.8 9.9c-.6-.6-1.2-.9-1.8-.9z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-emerald-950 tracking-tight group-hover:text-amber-700 transition-colors">Tailwind CSS</h4>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-bold text-emerald-950/50 bg-[#F4F4F0] group-hover:bg-amber-500/10 group-hover:text-amber-800 px-1.5 py-0.5 rounded-md transition-colors">95%</span>
+                        <span className="text-[9px] font-extrabold text-[#112a1f] bg-[#38bdf8]/10 text-cyan-800 px-2 py-0.5 rounded-full uppercase tracking-wider group-hover:scale-105 transition-transform">Expert</span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-emerald-950/70 group-hover:text-emerald-950/90 mt-1 leading-relaxed transition-colors">
+                      Utility-first configurations, beautiful responsive grids, micro-interactions, custom brand design systems.
+                    </p>
+                    {/* Progress Bar */}
+                    <div className="mt-3.5 w-full h-1.5 bg-[#e8e5d9] rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-emerald-950 to-[#C29F5C] rounded-full group-hover:from-amber-500 group-hover:to-amber-600 transition-all duration-500" style={{ width: "95%" }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tool 4: Node.js & APIs */}
+              <div className="group bg-white p-4 rounded-2xl border border-emerald-950/5 shadow-sm hover:scale-[1.02] hover:translate-x-1.5 hover:shadow-md hover:border-emerald-950/15 transition-all duration-300 cursor-default">
+                <div className="flex items-start gap-3.5">
+                  {/* Node.js Icon */}
+                  <div className="w-11 h-11 shrink-0 rounded-xl bg-[#14251c] flex items-center justify-center border border-[#398239]/40 shadow-sm group-hover:scale-108 group-hover:rotate-6 transition-transform duration-300">
+                    <span className="text-[10px] font-black text-[#43a047] tracking-tighter leading-none uppercase">Node</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-emerald-950 tracking-tight group-hover:text-amber-700 transition-colors">Node.js & Express</h4>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-bold text-emerald-950/50 bg-[#F4F4F0] group-hover:bg-amber-500/10 group-hover:text-amber-800 px-1.5 py-0.5 rounded-md transition-colors">90%</span>
+                        <span className="text-[9px] font-extrabold text-[#112a1f] bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider group-hover:scale-105 transition-transform">Advanced</span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-emerald-950/70 group-hover:text-emerald-950/90 mt-1 leading-relaxed transition-colors">
+                      High-performance backend routing, REST API microservices, middleware controllers, secure auth tokens.
+                    </p>
+                    {/* Progress Bar */}
+                    <div className="mt-3.5 w-full h-1.5 bg-[#e8e5d9] rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-emerald-950 to-[#C29F5C] rounded-full group-hover:from-amber-500 group-hover:to-amber-600 transition-all duration-500" style={{ width: "90%" }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tool 5: WordPress & PHP */}
+              <div className="group bg-white p-4 rounded-2xl border border-emerald-950/5 shadow-sm hover:scale-[1.02] hover:translate-x-1.5 hover:shadow-md hover:border-emerald-950/15 transition-all duration-300 cursor-default">
+                <div className="flex items-start gap-3.5">
+                  {/* WordPress Icon */}
+                  <div className="w-11 h-11 shrink-0 rounded-xl bg-[#0b2434] flex items-center justify-center border border-[#21759b]/40 shadow-sm group-hover:scale-108 group-hover:rotate-6 transition-transform duration-300">
+                    <span className="text-lg font-serif font-black text-[#21759b] leading-none">W</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-emerald-950 tracking-tight group-hover:text-amber-700 transition-colors">WordPress & PHP</h4>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-bold text-emerald-950/50 bg-[#F4F4F0] group-hover:bg-amber-500/10 group-hover:text-amber-800 px-1.5 py-0.5 rounded-md transition-colors">94%</span>
+                        <span className="text-[9px] font-extrabold text-[#112a1f] bg-[#21759b]/10 text-cyan-800 px-2 py-0.5 rounded-full uppercase tracking-wider group-hover:scale-105 transition-transform">Expert</span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-emerald-950/70 group-hover:text-emerald-950/90 mt-1 leading-relaxed transition-colors">
+                      Bespoke themes, theme editor customization, dynamic hooks, custom database integrations.
+                    </p>
+                    {/* Progress Bar */}
+                    <div className="mt-3.5 w-full h-1.5 bg-[#e8e5d9] rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-emerald-950 to-[#C29F5C] rounded-full group-hover:from-amber-500 group-hover:to-amber-600 transition-all duration-500" style={{ width: "94%" }}></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 border-t border-white/10 pt-6">
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-                <p className="text-2xl font-extrabold text-amber-500 tabular-nums">90+</p>
-                <p className="text-[10px] uppercase tracking-wider text-white/50 font-bold mt-1">App Deliveries</p>
-              </div>
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-                <p className="text-2xl font-extrabold text-amber-500 tabular-nums">100%</p>
-                <p className="text-[10px] uppercase tracking-wider text-white/50 font-bold mt-1">Code Integrity</p>
-              </div>
-            </div>
-          </div>
+
 
         </div>
       </section>
@@ -1254,11 +1483,92 @@ export default function App() {
               <div 
                 key={item.id}
                 onClick={() => setSelectedProject(item)}
-                className="group relative bg-white rounded-2xl overflow-hidden border border-emerald-950/5 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+                className="group relative bg-white rounded-2xl overflow-hidden border border-emerald-950/5 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 cursor-pointer flex flex-col"
               >
                 
-                {/* Project Image Box with live site link, change button, and delete trigger */}
-                <div className="aspect-[4/3] bg-emerald-950 overflow-hidden relative">
+                {/* Text Details Header on Top */}
+                <div className="p-4 flex items-center justify-between bg-white border-b border-emerald-950/5">
+                  <div className="min-w-0 pr-2">
+                    <h4 className="text-xs font-bold text-emerald-950 truncate">{item.title}</h4>
+                    <div className="flex items-center gap-2 text-[10px] text-emerald-950/50 mt-1 font-semibold">
+                      <span>{item.category}</span>
+                      <span>•</span>
+                      <span>{item.year}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                    {item.websiteUrl ? (
+                      <div className="flex items-center gap-1">
+                        <a
+                          href={item.websiteUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[10px] font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+                          title="Open Live Website in New Tab"
+                        >
+                          <Globe className="w-3 h-3" />
+                          <span>Link</span>
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                        <button
+                          onClick={() => {
+                            const newUrl = prompt("Paste or type the website URL for this project:", item.websiteUrl || "");
+                            if (newUrl !== null) {
+                              const cleanUrl = newUrl.trim();
+                              const updated = projects.map(p => {
+                                if (p.id === item.id) {
+                                  return { ...p, websiteUrl: cleanUrl || undefined };
+                                }
+                                return p;
+                              });
+                              setProjects(updated);
+                              localStorage.setItem("abdullah_portfolio_items", JSON.stringify(updated));
+                              if (selectedProject?.id === item.id) {
+                                setSelectedProject(prev => prev ? { ...prev, websiteUrl: cleanUrl || undefined } : null);
+                              }
+                              triggerToast("Website URL link updated successfully!", "success");
+                            }
+                          }}
+                          className="text-[10px] font-bold text-emerald-950/60 hover:text-emerald-950 p-1 bg-emerald-950/5 hover:bg-emerald-950/10 rounded-md transition-all cursor-pointer"
+                          title="Edit Website URL Link"
+                        >
+                          <Edit className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          const newUrl = prompt("Paste or type the website URL for this project:", "");
+                          if (newUrl !== null) {
+                            const cleanUrl = newUrl.trim();
+                            const updated = projects.map(p => {
+                              if (p.id === item.id) {
+                                return { ...p, websiteUrl: cleanUrl || undefined };
+                              }
+                              return p;
+                            });
+                            setProjects(updated);
+                            localStorage.setItem("abdullah_portfolio_items", JSON.stringify(updated));
+                            if (selectedProject?.id === item.id) {
+                              setSelectedProject(prev => prev ? { ...prev, websiteUrl: cleanUrl || undefined } : null);
+                            }
+                            triggerToast("Website URL link updated successfully!", "success");
+                          }
+                        }}
+                        className="text-[9px] font-extrabold text-emerald-950/80 hover:text-white flex items-center gap-1 bg-amber-500 hover:bg-emerald-950 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-sm"
+                        title="Paste or Change Project Link"
+                      >
+                        <Plus className="w-2.5 h-2.5" />
+                        <span>Paste Link</span>
+                      </button>
+                    )}
+                    <ChevronRight className="w-3.5 h-3.5 text-amber-500 shrink-0 transform group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* Project Image Box below the details */}
+                <div className="aspect-[4/3] bg-emerald-950 overflow-hidden relative flex-1">
                   <img 
                     src={item.image} 
                     alt={item.title} 
@@ -1311,36 +1621,6 @@ export default function App() {
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
-                </div>
-
-                {/* Footer text panel */}
-                <div className="p-4 flex items-center justify-between bg-white border-t border-emerald-950/5">
-                  <div className="min-w-0 pr-2">
-                    <h4 className="text-xs font-bold text-emerald-950 truncate">{item.title}</h4>
-                    <div className="flex items-center gap-2 text-[10px] text-emerald-950/50 mt-1 font-semibold">
-                      <span>{item.category}</span>
-                      <span>•</span>
-                      <span>{item.year}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    {item.websiteUrl && (
-                      <a
-                        href={item.websiteUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-[10px] font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-lg transition-colors cursor-pointer"
-                        title="Open Live Website in New Tab"
-                      >
-                        <Globe className="w-3 h-3" />
-                        <span>Link</span>
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </a>
-                    )}
-                    <ChevronRight className="w-4 h-4 text-amber-500 shrink-0 transform group-hover:translate-x-1 transition-transform" />
-                  </div>
                 </div>
 
               </div>
@@ -1805,18 +2085,8 @@ export default function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-12">
               
-              {/* Image Column */}
-              <div className="md:col-span-7 bg-[#ECEAE1] relative overflow-hidden flex items-center justify-center p-6 md:p-10 border-b md:border-b-0 md:border-r border-emerald-950/5 min-h-[300px]">
-                <img 
-                  src={selectedProject.image} 
-                  alt={selectedProject.title} 
-                  className="max-w-full max-h-[50vh] object-contain rounded-xl shadow-lg"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-
-              {/* Text Meta Column */}
-              <div className="md:col-span-5 p-6 lg:p-8 flex flex-col justify-between">
+              {/* Text Meta Column - Renders first on mobile, right side on desktop */}
+              <div className="md:col-span-5 p-6 lg:p-8 flex flex-col justify-between md:order-2">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-[10px] font-bold text-amber-600 tracking-widest uppercase">
@@ -1922,7 +2192,16 @@ export default function App() {
                     <Download className="w-4 h-4" />
                   </button>
                 </div>
+              </div>
 
+              {/* Image Column - Renders second on mobile, left side on desktop */}
+              <div className="md:col-span-7 bg-[#ECEAE1] relative overflow-hidden flex items-center justify-center p-6 md:p-10 border-t md:border-t-0 md:border-r border-emerald-950/5 min-h-[300px] md:order-1">
+                <img 
+                  src={selectedProject.image} 
+                  alt={selectedProject.title} 
+                  className="max-w-full max-h-[50vh] object-contain rounded-xl shadow-lg"
+                  referrerPolicy="no-referrer"
+                />
               </div>
 
             </div>
@@ -2201,6 +2480,109 @@ export default function App() {
                 </p>
               </div>
 
+              {/* High-fidelity Circular Logo Social Media Config fields (GitHub, LinkedIn, WordPress) */}
+              <div className="border-t border-emerald-950/10 pt-4 mt-2">
+                <label className="block text-[10px] font-bold text-emerald-950/50 uppercase tracking-wider mb-2 flex items-center justify-between">
+                  <span>SOCIAL PROFILES CONFIG (CONNECTED LOGOS)</span>
+                  <button 
+                    type="button"
+                    onClick={() => triggerToast("All social profile coordinates synced successfully!", "success")}
+                    className="text-amber-600 font-bold uppercase text-[9px] hover:underline"
+                  >
+                    Sync All
+                  </button>
+                </label>
+                
+                <div className="space-y-3">
+                  {/* GitHub Config */}
+                  <div>
+                    <label className="block text-[9px] font-bold text-emerald-950/40 uppercase mb-1">
+                      GITHUB PROFILE (URL & DISPLAY HANDLE)
+                    </label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="url" 
+                        value={githubUrl}
+                        onChange={(e) => {
+                          setGithubUrl(e.target.value);
+                          localStorage.setItem("abdullah_github_url", e.target.value);
+                        }}
+                        placeholder="https://github.com/your-username"
+                        className="flex-1 bg-[#ECEAE1] border border-emerald-950/5 px-3 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500 text-emerald-950"
+                      />
+                      <input 
+                        type="text" 
+                        value={githubUsername}
+                        onChange={(e) => {
+                          setGithubUsername(e.target.value);
+                          localStorage.setItem("abdullah_github_user", e.target.value);
+                        }}
+                        placeholder="github.com/your-username"
+                        className="w-1/3 bg-[#ECEAE1] border border-emerald-950/5 px-3 py-2 rounded-xl text-xs font-bold focus:outline-none focus:ring-1 focus:ring-amber-500 text-emerald-950"
+                      />
+                    </div>
+                  </div>
+
+                  {/* LinkedIn Config */}
+                  <div>
+                    <label className="block text-[9px] font-bold text-emerald-950/40 uppercase mb-1">
+                      LINKEDIN PROFILE (URL & DISPLAY HANDLE)
+                    </label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="url" 
+                        value={linkedinUrl}
+                        onChange={(e) => {
+                          setLinkedinUrl(e.target.value);
+                          localStorage.setItem("abdullah_linkedin_url", e.target.value);
+                        }}
+                        placeholder="https://linkedin.com/in/your-username"
+                        className="flex-1 bg-[#ECEAE1] border border-emerald-950/5 px-3 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500 text-emerald-950"
+                      />
+                      <input 
+                        type="text" 
+                        value={linkedinUsername}
+                        onChange={(e) => {
+                          setLinkedinUsername(e.target.value);
+                          localStorage.setItem("abdullah_linkedin_user", e.target.value);
+                        }}
+                        placeholder="linkedin.com/in/your-username"
+                        className="w-1/3 bg-[#ECEAE1] border border-emerald-950/5 px-3 py-2 rounded-xl text-xs font-bold focus:outline-none focus:ring-1 focus:ring-amber-500 text-emerald-950"
+                      />
+                    </div>
+                  </div>
+
+                  {/* WordPress Config */}
+                  <div>
+                    <label className="block text-[9px] font-bold text-emerald-950/40 uppercase mb-1">
+                      WORDPRESS SITE (URL & DISPLAY DOMAIN)
+                    </label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="url" 
+                        value={wordpressUrl}
+                        onChange={(e) => {
+                          setWordPressUrl(e.target.value);
+                          localStorage.setItem("abdullah_wordpress_url", e.target.value);
+                        }}
+                        placeholder="https://your-wordpress-site.org"
+                        className="flex-1 bg-[#ECEAE1] border border-emerald-950/5 px-3 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500 text-emerald-950"
+                      />
+                      <input 
+                        type="text" 
+                        value={wordpressUsername}
+                        onChange={(e) => {
+                          setWordPressUsername(e.target.value);
+                          localStorage.setItem("abdullah_wordpress_user", e.target.value);
+                        }}
+                        placeholder="yourdomain.org"
+                        className="w-1/3 bg-[#ECEAE1] border border-emerald-950/5 px-3 py-2 rounded-xl text-xs font-bold focus:outline-none focus:ring-1 focus:ring-amber-500 text-emerald-950"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="pt-2 flex gap-3">
                 <button
                   type="button"
@@ -2404,6 +2786,71 @@ export default function App() {
                     + ADD
                   </button>
                 </form>
+
+                {/* Suggested presets inside modal */}
+                <div className="mt-5 pt-4 border-t border-emerald-950/10">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                    <span className="text-[10px] font-extrabold text-[#0D2C1D]/60 uppercase tracking-wider">
+                      ⚡ Quick Web Developer Stack Presets:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const webDevStack = [
+                          "React & Next.js SSR",
+                          "HTML5 & CSS3 Layouts",
+                          "Tailwind CSS Utility",
+                          "JavaScript (ES6+)",
+                          "TypeScript Typed",
+                          "Node.js & Express APIs",
+                          "PostgreSQL Database",
+                          "MongoDB NoSQL",
+                          "WordPress Customization",
+                          "REST & GraphQL APIs",
+                          "Git & GitHub Versioning",
+                          "CI/CD Cloud Deployment"
+                        ];
+                        setSkills(webDevStack);
+                        localStorage.setItem("abdullah_skills", JSON.stringify(webDevStack));
+                        triggerToast("Full Web Developer Stack loaded successfully!", "success");
+                      }}
+                      className="text-[10px] font-extrabold text-amber-600 hover:text-amber-700 uppercase tracking-wider cursor-pointer hover:underline flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-lg transition-colors"
+                    >
+                      ⚡ Load Web Developer Stack
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      "React & Next.js SSR",
+                      "Tailwind CSS Utility",
+                      "TypeScript Typed",
+                      "Node.js & Express APIs",
+                      "PostgreSQL Database",
+                      "WordPress Customization",
+                      "REST & GraphQL APIs",
+                      "Git & GitHub Versioning"
+                    ].map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          if (skills.includes(tag)) {
+                            triggerToast(`"${tag}" is already added!`, "info");
+                            return;
+                          }
+                          const updated = [...skills, tag];
+                          setSkills(updated);
+                          localStorage.setItem("abdullah_skills", JSON.stringify(updated));
+                          triggerToast(`Added preset skill: ${tag}`, "success");
+                        }}
+                        className="text-[10px] font-bold text-emerald-950 bg-[#F4F4F0] hover:bg-amber-500 hover:text-emerald-950 px-2.5 py-1.5 rounded-xl border border-emerald-950/5 transition-all cursor-pointer shadow-sm active:scale-95"
+                      >
+                        + {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Core Technologies & Proficiency levels */}
