@@ -38,6 +38,18 @@ const WordPressIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+// High-Fidelity Custom Sparkling Star Logo Component (with central elegant serif A monogram, top-right plus, and bottom-left dot)
+const SparklingLogo = ({ className = "w-6 h-6 text-amber-500" }: { className?: string }) => (
+  <svg viewBox="0 0 100 100" className={className} fill="currentColor">
+    {/* Central Elegant Serif "A" Monogram */}
+    <text x="50" y="66" textAnchor="middle" className="font-serif font-black" style={{ fontSize: '56px' }}>A</text>
+    {/* Small Plus Symbol on top right */}
+    <path d="M 72,28 L 84,28 M 78,22 L 78,34" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+    {/* Small Circle/Dot on bottom left */}
+    <circle cx="25" cy="73" r="6" />
+  </svg>
+);
+
 // Portfolio project structure
 interface Project {
   id: string;
@@ -129,6 +141,73 @@ export default function App() {
   const [wordpressUrl, setWordPressUrl] = useState("https://wordpress.org");
   const [wordpressUsername, setWordPressUsername] = useState("wordpress.org");
 
+  // Draggable Social Float Card state
+  const [socialPosition, setSocialPosition] = useState({ x: 0, y: 0 });
+  const [isSocialDragging, setIsSocialDragging] = useState(false);
+  const [socialDragStart, setSocialDragStart] = useState({ x: 0, y: 0 });
+
+  const handleSocialMouseDown = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest("a") || target.closest("button") || target.closest("input")) {
+      return;
+    }
+    setIsSocialDragging(true);
+    setSocialDragStart({
+      x: e.clientX - socialPosition.x,
+      y: e.clientY - socialPosition.y
+    });
+  };
+
+  const handleSocialTouchStart = (e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest("a") || target.closest("button") || target.closest("input")) {
+      return;
+    }
+    const touch = e.touches[0];
+    setIsSocialDragging(true);
+    setSocialDragStart({
+      x: touch.clientX - socialPosition.x,
+      y: touch.clientY - socialPosition.y
+    });
+  };
+
+  useEffect(() => {
+    const handleMouseMoveGlobal = (e: MouseEvent) => {
+      if (!isSocialDragging) return;
+      setSocialPosition({
+        x: e.clientX - socialDragStart.x,
+        y: e.clientY - socialDragStart.y
+      });
+    };
+
+    const handleTouchMoveGlobal = (e: TouchEvent) => {
+      if (!isSocialDragging) return;
+      const touch = e.touches[0];
+      setSocialPosition({
+        x: touch.clientX - socialDragStart.x,
+        y: touch.clientY - socialDragStart.y
+      });
+    };
+
+    const handleMouseUpGlobal = () => {
+      setIsSocialDragging(false);
+    };
+
+    if (isSocialDragging) {
+      window.addEventListener("mousemove", handleMouseMoveGlobal);
+      window.addEventListener("mouseup", handleMouseUpGlobal);
+      window.addEventListener("touchmove", handleTouchMoveGlobal, { passive: false });
+      window.addEventListener("touchend", handleMouseUpGlobal);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMoveGlobal);
+      window.removeEventListener("mouseup", handleMouseUpGlobal);
+      window.removeEventListener("touchmove", handleTouchMoveGlobal);
+      window.removeEventListener("touchend", handleMouseUpGlobal);
+    };
+  }, [isSocialDragging, socialDragStart, socialPosition]);
+
   // Helper to trigger elegant non-blocking toasts
   const triggerToast = (text: string, type: "success" | "error" | "info" = "success") => {
     setToast({ text, type });
@@ -179,6 +258,39 @@ export default function App() {
       deliverables: ["React Context State Controller", "Tailwind Fluid Layouts", "Stripe API Integration", "Client Admin Product Panel"]
     },
     {
+      id: "proj-furniture",
+      title: "Luxura Premium Furniture E-Commerce",
+      category: "E-Commerce",
+      image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1000&q=80",
+      websiteUrl: "https://furniture-store-gules-six.vercel.app/",
+      description: "A premium high-fidelity digital e-commerce furniture showroom. Features custom-curated designer galleries, smooth responsive catalog browsing, immersive product-detail previews, and highly optimized storefront performance.",
+      client: "Luxura Furniture Group",
+      year: "2025",
+      deliverables: ["High-Fidelity Storefront Design", "Curated Product Showrooms", "Interactive Shopping Workflows", "Vite & React Fast Load Deployment"]
+    },
+    {
+      id: "proj-mba",
+      title: "MBA Professional Editing Services",
+      category: "Frontend",
+      image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1000&q=80",
+      websiteUrl: "https://mba-editing.vercel.app/#services",
+      description: "A premium service agency landing page for professional MBA application editing, thesis proofreading, and essay polishing services. Engineered with responsive service blocks, custom dynamic jump links, and clean typography.",
+      client: "MBA Application Partners",
+      year: "2025",
+      deliverables: ["Strategic Service Information Architecture", "Responsive Multi-Device Layout", "Interactive Service Jump-Links", "SEO Semantic Content Mapping"]
+    },
+    {
+      id: "proj-serena",
+      title: "Serena Hotels & Resorts Platform",
+      category: "Full-Stack",
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80",
+      websiteUrl: "https://www.serenahotels.com/",
+      description: "A luxury digital hospitality and booking engine for premium five-star resort locations. Features smooth gallery visualizers, interactive custom room configurations, live check-in calendars, and robust enterprise guest portals.",
+      client: "Serena International Hotels Group",
+      year: "2025",
+      deliverables: ["Luxury Guest Portal Redesign", "High-Performance Booking Workflows", "Responsive Amenity Visualizers", "SEO Optimizations for Regional Search"]
+    },
+    {
       id: "proj-3",
       title: "Vivid UI/UX Design System",
       category: "UI/UX",
@@ -188,28 +300,6 @@ export default function App() {
       client: "Vivid Softworks",
       year: "2024",
       deliverables: ["Figma Design Token Export", "Tailwind Theme Extensions", "Accessible WAI-ARIA React Widgets", "Clean Storybook Documentation"]
-    },
-    {
-      id: "proj-4",
-      title: "Aura Creative Portfolio Engine",
-      category: "Frontend",
-      image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1000&q=80",
-      websiteUrl: "https://react.dev",
-      description: "A lightning-fast, sleek modular creative portfolio template showcasing fluid layouts, deep custom styling hooks, responsive grids, and clean visual storytelling rules.",
-      client: "Aura Studios",
-      year: "2024",
-      deliverables: ["Single Page Application Structure", "Lucide Icon Integration", "Custom Client Configurator Panel", "Optimized Web Vitals Scoring"]
-    },
-    {
-      id: "proj-5",
-      title: "Secure RESTful Authentication Gateway",
-      category: "APIs",
-      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1000&q=80",
-      websiteUrl: "https://supabase.com",
-      description: "An isolated enterprise grade authentication microservice proxy supporting OAuth logins, secure cookie sessions, request rate-limiting safeguards, and database credential encryption.",
-      client: "Shield Cybernetics",
-      year: "2024",
-      deliverables: ["Node.js API Microservice", "OAuth 2.0 Auth Flow Setup", "Redis Token Backing Layer", "Comprehensive Postman Documentation Suite"]
     }
   ];
 
@@ -269,10 +359,33 @@ export default function App() {
     const savedProjects = localStorage.getItem("abdullah_portfolio_items");
     if (savedProjects) {
       try {
-        const parsed: Project[] = JSON.parse(savedProjects);
-        const upgraded = parsed.map((p, idx) => {
-          if (!p.websiteUrl && defaultProjects[idx]) {
-            return { ...p, websiteUrl: defaultProjects[idx].websiteUrl, image: defaultProjects[idx].image };
+        let parsed: Project[] = JSON.parse(savedProjects).filter((p: Project) => p.id !== "proj-4" && p.id !== "proj-5");
+        // Smart injection: ensure the premium Furniture Store project is always available
+        if (!parsed.some(p => p.id === "proj-furniture")) {
+          const furnProject = defaultProjects.find(p => p.id === "proj-furniture");
+          if (furnProject) {
+            parsed.splice(1, 0, furnProject); // Insert at index 1 for high-visibility display
+          }
+        }
+        // Smart injection: ensure the MBA Editing project is always available
+        if (!parsed.some(p => p.id === "proj-mba")) {
+          const mbaProject = defaultProjects.find(p => p.id === "proj-mba");
+          if (mbaProject) {
+            parsed.splice(2, 0, mbaProject); // Insert at index 2 for high-visibility display
+          }
+        }
+        // Smart injection: ensure the Serena Hotels project is always available
+        if (!parsed.some(p => p.id === "proj-serena")) {
+          const serenaProject = defaultProjects.find(p => p.id === "proj-serena");
+          if (serenaProject) {
+            parsed.splice(3, 0, serenaProject); // Insert at index 3 for high-visibility display
+          }
+        }
+        const upgraded = parsed.map((p) => {
+          // Fallback image/url mapping for existing default list items
+          const matchingDefault = defaultProjects.find(dp => dp.id === p.id);
+          if (matchingDefault) {
+            return { ...p, websiteUrl: p.websiteUrl || matchingDefault.websiteUrl, image: matchingDefault.image };
           }
           return p;
         });
@@ -694,7 +807,12 @@ export default function App() {
                   PORTFOLIO · AA ABDULLAH · PREMIUM ·
                 </textPath>
               </text>
-              <text x="50" y="44" textAnchor="middle" className="font-serif font-black fill-amber-400" style={{ fontSize: '22px' }}>A</text>
+              {/* Custom Sparkling Star Logo group */}
+              <g transform="translate(38, 23) scale(0.24)" className="text-amber-400">
+                <path d="M 50,15 C 50,35 35,50 15,50 C 35,50 50,65 50,85 C 50,65 65,50 85,50 C 65,50 50,35 50,15 Z" fill="currentColor" />
+                <path d="M 72,28 L 84,28 M 78,22 L 78,34" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+                <circle cx="25" cy="75" r="7" fill="currentColor" />
+              </g>
               <text x="50" y="53" textAnchor="middle" className="font-sans font-bold fill-white" style={{ fontSize: '8px' }}>Abdullah</text>
               <text x="50" y="61" textAnchor="middle" className="font-sans font-extrabold fill-amber-400" style={{ fontSize: '4.5px', letterSpacing: '1px' }}>ENGINEER</text>
               <g transform="translate(44, 66) scale(0.5)" stroke="#C29F5C" fill="none" strokeWidth="1.5">
@@ -939,6 +1057,28 @@ export default function App() {
                 <Sparkles className="w-6 h-6 fill-amber-500" />
               </div>
 
+              {/* Spinning Monogram Logo Emblem Watermark Overlay (Moved outside to pop out!) */}
+              <div className="absolute -top-5 -left-5 lg:-top-7 lg:-left-7 z-30 pointer-events-none select-none animate-float shadow-xl" style={{ animationDelay: '1.5s' }}>
+                <div className="relative w-18 h-18 rounded-full border border-amber-500/30 flex items-center justify-center p-1 bg-emerald-950 shadow-2xl">
+                  
+                  {/* SVG Rotating Text */}
+                  <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full animate-[spin_18s_linear_infinite] opacity-90">
+                    <defs>
+                      <path id="circlePathHero" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" />
+                    </defs>
+                    <text className="text-[10px] tracking-[2.8px] fill-amber-500 uppercase font-black">
+                      <textPath href="#circlePathHero">ABDULLAH • WEB DEV • </textPath>
+                    </text>
+                  </svg>
+
+                  {/* Central Monogram */}
+                  <div className="w-11 h-11 rounded-full border border-amber-500/20 flex items-center justify-center bg-emerald-900 p-2.5">
+                    <SparklingLogo className="w-full h-full text-amber-500" />
+                  </div>
+
+                </div>
+              </div>
+
               {/* Dynamic Portrait Frame containing high-tech code/graphics visual */}
               <div className={`transition-all duration-500 overflow-hidden border-[10px] border-[#ECEAE1] shadow-2xl relative bg-emerald-950 group ${
                 heroImgStyle === "circle"
@@ -1033,11 +1173,24 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Premium Social Credentials Float Card (Styled exactly like the requested Pinterest/TikTok/Instagram style) */}
-              <div className="relative mt-10 mx-auto lg:absolute lg:mt-0 lg:-bottom-10 lg:-left-40 xl:-left-48 bg-white border border-emerald-950/5 text-emerald-950 p-5 rounded-[2rem] shadow-2xl w-72 text-left z-20 group/social hover:scale-102 transition-transform duration-300">
+              {/* Premium Social Credentials Float Card (Fully Draggable around the screen with Mouse & Touch!) */}
+              <div 
+                onMouseDown={handleSocialMouseDown}
+                onTouchStart={handleSocialTouchStart}
+                style={{ 
+                  transform: `translate3d(${socialPosition.x}px, ${socialPosition.y}px, 0)`,
+                  touchAction: "none"
+                }}
+                className={`relative mt-10 mx-auto lg:absolute lg:mt-0 lg:-bottom-10 lg:-left-40 xl:-left-48 bg-white border border-emerald-950/10 text-emerald-950 p-5 rounded-[2rem] shadow-2xl w-72 text-left z-20 group/social select-none transition-all duration-100 ${
+                  isSocialDragging 
+                    ? 'cursor-grabbing shadow-3xl ring-2 ring-amber-500/30 scale-102' 
+                    : 'cursor-grab hover:scale-102 hover:shadow-2xl'
+                }`}
+              >
                 <div className="flex items-center justify-between border-b border-emerald-950/5 pb-2.5 mb-4">
-                  <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.15em]">
-                    CONNECT WITH ME:
+                  <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.15em] flex items-center gap-1">
+                    <span>CONNECT WITH ME:</span>
+                    <span className="text-[8.5px] font-bold text-emerald-950/30 lowercase tracking-normal font-sans">(drag me)</span>
                   </p>
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 </div>
@@ -1218,9 +1371,11 @@ export default function App() {
                 </svg>
 
                 {/* Central Monogram */}
-                <div className="w-32 h-32 rounded-full border border-amber-500/20 flex flex-col items-center justify-center bg-[#071911] shadow-xl text-center">
-                  <span className="font-serif text-4xl font-extrabold text-amber-500 leading-none">A</span>
-                  <span className="font-serif text-xs text-white mt-1 leading-none tracking-wide">Abdullah</span>
+                <div className="w-32 h-32 rounded-full border border-amber-500/20 flex flex-col items-center justify-center bg-emerald-950 shadow-xl text-center p-4">
+                  <div className="w-10 h-10 mb-1">
+                    <SparklingLogo className="w-full h-full text-amber-500" />
+                  </div>
+                  <span className="font-serif text-xs text-white leading-none tracking-wide">Abdullah</span>
                   <span className="text-[7px] uppercase tracking-[0.25em] text-amber-500 mt-1">ENGINEER</span>
                   
                   <div className="mt-2 text-amber-500/60">
@@ -1598,28 +1753,16 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Change Image / Edit Project button */}
+                  {/* Change Image / Edit Project button (Now centered cleanly at right-3 since delete is removed) */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpenEditProject(item);
                     }}
-                    className="absolute top-3 right-12 z-30 bg-emerald-950/90 hover:bg-amber-500 hover:text-emerald-950 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-90 md:opacity-0 md:group-hover:opacity-100 transition-all cursor-pointer shadow-md border border-white/10 hover:scale-105"
+                    className="absolute top-3 right-3 z-30 bg-emerald-950/90 hover:bg-amber-500 hover:text-emerald-950 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-90 md:opacity-0 md:group-hover:opacity-100 transition-all cursor-pointer shadow-md border border-white/10 hover:scale-105"
                     title="Change Image or Website Link"
                   >
                     <Edit className="w-3.5 h-3.5" />
-                  </button>
-
-                  {/* Absolute delete button overlay visible to Abdullah */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteProject(item.id);
-                    }}
-                    className="absolute top-3 right-3 z-30 bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-90 md:opacity-0 md:group-hover:opacity-100 transition-all cursor-pointer shadow-md"
-                    title="Delete Project item"
-                  >
-                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
 
